@@ -1,6 +1,6 @@
 import { EventTypes } from './events';
 
-type ContextType = {
+export type ContextType = {
     [index: string]: string | number | object;
 };
 
@@ -42,7 +42,7 @@ export type GenericEventType = {
     value?: string | number; // e.g. step-1
 };
 
-export type TrackEventPropsType = <T extends EventTypes>(
+export type TrackEventPropsType = <T extends EventTypes | string>(
     name: T,
     context: T extends EventTypes.CLICK
         ? ClickEventType
@@ -52,7 +52,7 @@ export type TrackEventPropsType = <T extends EventTypes>(
         ? GenericEventType
         : T extends EventTypes.PURCHASE
         ? PurchaseEventType
-        : T extends EventTypes.CUSTOM
+        : T extends string
         ? CustomEventType
         : never
 ) => void;
