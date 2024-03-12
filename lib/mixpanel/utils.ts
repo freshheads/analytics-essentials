@@ -33,6 +33,8 @@ export const extractUtmParams = (paramsString: string) => {
 export const writeUtmParamsToSessionStorage = (paramsString: string) => {
     const searchParams = new URLSearchParams(paramsString);
 
+    console.log('test');
+
     const utmSourceKeys = [
         'utm_source',
         'utm_medium',
