@@ -29,10 +29,10 @@ const App = () => {
 
 ```tsx
 
-import { MixpanelEvent } from '@freshheads/analytics-essentials';
+import { WebMixpanelEvent, WebMixpanelPageViewEvent } from '@freshheads/analytics-essentials';
 import { executePostRequest } from '@/api/client';
 
-export const sendTrackEvent = async (data: MixpanelEvent | MixpanelPageViewEvent) => {
+export const sendTrackEvent = async (data: WebMixpanelEvent | WebMixpanelPageViewEvent) => {
     return executePostRequest('_mixpanel/track', data);
 };
 ```
