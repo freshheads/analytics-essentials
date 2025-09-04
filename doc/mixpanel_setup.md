@@ -9,21 +9,26 @@ For the backend Freshheads created a php bundle, [FHMixpanelBundle](https://gith
 Add the MixpanelProvider to your app:
 
 ```tsx
-import { MixpanelProvider } from '@freshheads/analytics-essentials';
+import { MixpanelProvider } from "@freshheads/analytics-essentials";
+import { useMemo } from "react";
 
 const App = () => {
+  const trackingService = useMemo(
+    () =>
+      new WebTrackingService((event) => {
+        return sendTrackEvent(event);
+      }),
+    []
+  );
+
   return (
-      <MixpanelProvider
-          trackingService={
-              new WebTrackingService((event) => {
-                  return sendTrackEvent(event);
-              })
-          }>
-        <YourApp />
+    <MixpanelProvider trackingService={trackingService}>
+      <YourApp />
     </MixpanelProvider>
   );
 };
 ```
+> Tip: memoize the WebTrackingService instance to prevent accidental page view triggers. If we'd instantiate it inline, we would trigger a page view whenever app rerenders (e.g. when the path, query params or hash changes)
 
 `sendTrackEvent` is a function that sends the event to the backend. It should have the following signature:
 
@@ -89,11 +94,7 @@ const defaultMixpanelEventContext = {
 const App = () => {
   return (
     <MixpanelProvider 
-        trackingService={
-            new WebTrackingService((event) => {
-                return sendTrackEvent(event);
-            })
-        } 
+        trackingService={trackingService} 
         defaultEventContext={defaultMixpanelEventContext}>
         <YourApp />
     </MixpanelProvider>
@@ -148,12 +149,7 @@ Then add this component to your app:
 
 const App = () => {
     return (
-        <MixpanelProvider 
-            trackingService={
-                new WebTrackingService((event) => {
-                    return sendTrackEvent(event);
-                })
-            }>
+        <MixpanelProvider trackingService={trackingService}>
             <TrackPageView />
             {children}
         </MixpanelProvider>
