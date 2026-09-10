@@ -9,7 +9,7 @@ For the backend Freshheads created a php bundle, [FHMixpanelBundle](https://gith
 Add the MixpanelProvider to your app:
 
 ```tsx
-import { MixpanelProvider } from "@freshheads/analytics-essentials";
+import { MixpanelProvider, WebTrackingService } from "@freshheads/analytics-essentials";
 import { useMemo } from "react";
 
 const App = () => {
