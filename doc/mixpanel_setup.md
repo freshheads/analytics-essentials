@@ -123,39 +123,51 @@ The reason we don't make this part of the essential package is because we don't 
 Or you might want to send additional data with the page view event.
 
 ```tsx
-export default function TrackPageView() {
-    const { trackPageView } = useMixpanelContext();
-    const router = useRouter();
-    const pathname = usePathname();
+'use client';
 
-    useEffect(() => {
-        trackPageView({
-            data: {
-                title: document.title,
-                pathname: pathname,
-                route: router.route,
-            },
-        });
-    }, [pathname]);
+import { useMixpanelContext } from '@freshheads/analytics-essentials';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
-    return null;
-}
+export const TrackPageView = () => {
+  const { trackPageView } = useMixpanelContext();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Reconstruct the full string path including query params if they exist
+    const queryString = searchParams.toString();
+    const fullRoute = queryString ? `${pathname}?${queryString}` : pathname;
+
+    trackPageView({
+      data: {
+        title: document.title,
+        pathname: pathname ?? '/',
+        route: fullRoute,
+      },
+    });
+  }, [trackPageView, pathname, searchParams]);
+
+  return null;
+};
 ```
 > Tip: use pathname as a dependency for the useEffect hook. This way it will not trigger on query param changes. If you want to track query changes, you could use location.href as a dependency.
 
 Then add this component to your app:
 
 ```tsx
-
 const App = () => {
     return (
         <MixpanelProvider trackingService={trackingService}>
-            <TrackPageView />
+            <Suspense fallback={null}>
+                <TrackPageView />
+            </Suspense>
             {children}
         </MixpanelProvider>
     );
 };
 ```
+> In the App Router, using the useSearchParams() hook will force Next.js to drop out of static optimization for the entire route unless it is explicitly trapped inside a (Suspense) boundary. 
 
 ### UTM tracking
 
